@@ -1,0 +1,29 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-brand-light text-brand-dark font-jost antialiased min-h-screen selection:bg-brand-gold selection:text-brand-dark;
+    font-family: 'Jost', sans-serif;
+  }
+}
+
+/* Custom scrollbars */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #E7ECEF;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #2C2E4C44;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #2C2E4C88;
+}

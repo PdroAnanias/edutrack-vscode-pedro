@@ -1,0 +1,55 @@
+﻿DESIGN
+* Tipografia/Fonte: Jost
+* Cores: #E7ECEF (Fundos dentro do app, bordas, etc.) - #2C2E4C(Fundos também das telas de autenticação, bordas, etc.) - #C8B755(Detalhes)
+* As cores podem ser utilizadas em diferentes opacidades/tons, isso é somente um guia.
+
+
+TELA LOGIN
+* Titulo Etrack-AI
+* Campo para email
+* Campo para senha com botão de ver e ocultar a senha
+* Direcionamento para Esqueceu sua senha
+* Botão entrar
+* Direcionamento para cadastro(cadastre-se)
+TELA CADASTRO
+* Campos para: Nome, Sobrenome, Email, Senha, Telefone, Curso(Campo para curso sendo campo suspenso que aparece os cursos Ciência da Computação, Sistemas da Informação e Análise e Desenvolvimento de Sistemas)
+* Botão entrar, como o de Login
+TELA ESQUECEU A SENHA EMAIL
+* Breve descrição do próposito da tela
+* Campo para preencher com o email
+* Botão para prosseguir para a próxima tela de Esqueceu a senha
+TELA ESQUECEU A SENHA CONFIRMAÇÃO EMAIL
+* Breve descrição do propósito da tela
+* 5 campos para cada caractere do código
+* Botão para prosseguir para a próxima página
+TELA ESQUECEU A SENHA, NOVA SENHA
+* Breve descrição do propósito da tela
+* Campo para nova senha com botão de ver e ocultar a senha
+* Campo para confirmar senha com botão de ver e ocultar a senha
+* Botão para prosseguir voltando ao Login
+
+
+
+
+TELA INICIAL/MENU
+* Tela para dashboards, insights, gráficos simples de tempo gasto por disciplina, lista de disciplinas com % de progresso calculado por tarefas concluídas
+* Barra de navegação na parte lateral esquerda da tela, com botões:
+   * De menu principal(tela atual)
+   * Da tela de disciplinas
+   * Da tela de perfil/configuração
+* Ao clicar nos botões da barra de navegação, mostrar qual está selecionado.
+* Na parte superior da barra de navegação, mostrar círculo com foto de perfil do usuário, Nome do usuário com saudação amigável (ex: Olá, João). Botão para sair/encerrar sessão.
+
+
+
+
+
+
+TELA DE DISCIPLINAS
+* Tela que mostre as disciplinas, como cada “quadrado”/espaço seja uma disciplina, com o nome da disciplina, o nome do professor, as horas da disciplina, um botão de edição no canto e um ícone com uma mensagem que mostre que tem tarefa pendente(como um sino de notificação)
+* Opção de entrar, ver o histórico de tarefas e as tarefas ainda pendentes. Adicionar uma nota/lembrete simples nas tarefas.
+* Opção de adicionar novas tarefas(com  título, descrição, data prevista e status) e excluir.
+* Opção de adicionar novas disciplinas, colocando o Nome da disciplina, nome do professor, carga horária, descrição, data de início e de término.
+TELA DE PERFIL/CONFIGURAÇÃO
+* Ter campos com as informações cadastradas, com a possibilidade de mudança das informações.
+* Opções básicas, como poder colocar uma foto e outras se houver necessidade e sentido com a proposta. Mas sem muita coisa.
