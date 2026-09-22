@@ -40,7 +40,6 @@ export default function Disciplines() {
 
   // Tasks state inside details modal
   const [tasks, setTasks] = useState([]);
-  const [taskFilter, setTaskFilter] = useState('all'); // 'all', 'pending', 'completed'
   const [newTaskForm, setNewTaskForm] = useState({
     title: '',
     description: '',
@@ -221,13 +220,6 @@ export default function Disciplines() {
       }
     }
   };
-
-  // Filter tasks for details view
-  const filteredTasks = tasks.filter(t => {
-    if (taskFilter === 'pending') return t.status === 'Pendente';
-    if (taskFilter === 'completed') return t.status === 'Concluída';
-    return true;
-  });
 
   return (
     <div className="flex-1 p-6 md:p-8 overflow-y-auto max-w-7xl mx-auto space-y-8">
@@ -507,47 +499,21 @@ export default function Disciplines() {
                 </form>
               </div>
 
-              {/* Tasks Filter Tabs */}
+              {/* Tasks List Header */}
               <div className="flex items-center justify-between border-b border-brand-dark/10 pb-3">
                 <h3 className="font-bold text-brand-dark text-base">
-                  Histórico e Tarefas ({tasks.length})
+                  Tarefas da Disciplina ({tasks.length})
                 </h3>
-                <div className="flex items-center gap-1 bg-brand-light p-1 rounded-xl text-xs">
-                  <button
-                    onClick={() => setTaskFilter('all')}
-                    className={`px-3 py-1.5 rounded-lg transition font-medium ${
-                      taskFilter === 'all' ? 'bg-brand-dark text-brand-light shadow' : 'text-brand-dark/70'
-                    }`}
-                  >
-                    Todas ({tasks.length})
-                  </button>
-                  <button
-                    onClick={() => setTaskFilter('pending')}
-                    className={`px-3 py-1.5 rounded-lg transition font-medium ${
-                      taskFilter === 'pending' ? 'bg-brand-dark text-brand-light shadow' : 'text-brand-dark/70'
-                    }`}
-                  >
-                    Pendentes ({tasks.filter(t => t.status === 'Pendente').length})
-                  </button>
-                  <button
-                    onClick={() => setTaskFilter('completed')}
-                    className={`px-3 py-1.5 rounded-lg transition font-medium ${
-                      taskFilter === 'completed' ? 'bg-brand-dark text-brand-light shadow' : 'text-brand-dark/70'
-                    }`}
-                  >
-                    Concluídas ({tasks.filter(t => t.status === 'Concluída').length})
-                  </button>
-                </div>
               </div>
 
               {/* Task Items List */}
               <div className="space-y-3">
-                {filteredTasks.length === 0 ? (
+                {tasks.length === 0 ? (
                   <div className="text-center py-8 text-brand-dark/50 text-sm">
-                    Nenhuma tarefa encontrada neste filtro.
+                    Nenhuma tarefa cadastrada nesta disciplina.
                   </div>
                 ) : (
-                  filteredTasks.map((t) => {
+                  tasks.map((t) => {
                     const isCompleted = t.status === 'Concluída';
 
                     return (

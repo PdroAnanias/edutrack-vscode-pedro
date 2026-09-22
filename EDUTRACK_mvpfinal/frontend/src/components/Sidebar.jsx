@@ -1,5 +1,5 @@
 import React from 'react';
-import { LayoutDashboard, BookOpen, User, LogOut, Sparkles } from 'lucide-react';
+import { LayoutDashboard, BookOpen, CheckSquare, User, LogOut, Sparkles } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 export default function Sidebar({ activeTab, setActiveTab }) {
@@ -7,6 +7,7 @@ export default function Sidebar({ activeTab, setActiveTab }) {
 
   const navItems = [
     { id: 'dashboard', label: 'Menu Principal', icon: LayoutDashboard },
+    { id: 'tasks', label: 'Tarefas Gerais', icon: CheckSquare },
     { id: 'disciplines', label: 'Disciplinas', icon: BookOpen },
     { id: 'profile', label: 'Perfil / Configurações', icon: User },
   ];

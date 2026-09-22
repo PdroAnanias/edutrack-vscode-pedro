@@ -374,58 +374,6 @@ export default function Dashboard({ onNavigateDiscipline }) {
           ))}
         </div>
       </div>
-
-      {/* UPCOMING TASKS SNIPPET */}
-      <div className="bg-white rounded-3xl p-6 md:p-8 border border-brand-dark/10 shadow-sm">
-        <div className="flex items-center justify-between mb-4">
-          <div>
-            <h3 className="font-bold text-brand-dark text-xl">
-              Próximas Tarefas e Prazos
-            </h3>
-            <p className="text-xs text-brand-dark/60">
-              Atividades pendentes prioritárias no seu calendário acadêmico
-            </p>
-          </div>
-          <Calendar className="w-5 h-5 text-brand-gold" />
-        </div>
-
-        {upcomingTasks.length === 0 ? (
-          <div className="text-center py-8 text-brand-dark/60 text-sm">
-            🎉 Parabéns! Você não possui nenhuma tarefa pendente no momento.
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {upcomingTasks.map((t) => (
-              <div
-                key={t.id}
-                className="p-4 rounded-2xl bg-brand-light/30 border border-brand-dark/10 flex flex-col justify-between"
-              >
-                <div>
-                  <span className="text-[11px] font-semibold text-brand-gold bg-brand-dark px-2.5 py-0.5 rounded-full inline-block mb-2">
-                    {t.discipline_name}
-                  </span>
-                  <h4 className="font-semibold text-brand-dark text-sm leading-snug">
-                    {t.title}
-                  </h4>
-                  {t.description && (
-                    <p className="text-xs text-brand-dark/70 mt-1 line-clamp-2">
-                      {t.description}
-                    </p>
-                  )}
-                </div>
-
-                <div className="mt-3 pt-3 border-t border-brand-dark/10 flex items-center justify-between text-xs text-brand-dark/60">
-                  <span className="flex items-center gap-1">
-                    <Calendar className="w-3.5 h-3.5" />
-                    {t.due_date ? new Date(t.due_date).toLocaleDateString('pt-BR') : 'Sem data'}
-                  </span>
-                  <span className="text-amber-600 font-medium">Pendente</span>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
     </div>
   );
 }

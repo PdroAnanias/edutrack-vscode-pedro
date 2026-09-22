@@ -5,6 +5,7 @@ import Register from './pages/Register';
 import ForgotPassword from './pages/ForgotPassword';
 import Sidebar from './components/Sidebar';
 import Dashboard from './pages/Dashboard';
+import GeneralTasks from './pages/GeneralTasks';
 import Disciplines from './pages/Disciplines';
 import Profile from './pages/Profile';
 import { Menu, X } from 'lucide-react';
@@ -12,7 +13,7 @@ import { Menu, X } from 'lucide-react';
 export default function App() {
   const { user, loading } = useAuth();
   const [authView, setAuthView] = useState('login'); // 'login', 'register', 'forgot-email', 'forgot-code', 'forgot-new'
-  const [activeTab, setActiveTab] = useState('dashboard'); // 'dashboard', 'disciplines', 'profile'
+  const [activeTab, setActiveTab] = useState('dashboard'); // 'dashboard', 'tasks', 'disciplines', 'profile'
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
 
   if (loading) {
@@ -88,8 +89,12 @@ export default function App() {
       {/* Main Content Area */}
       <main className="flex-1 flex flex-col h-screen overflow-y-auto bg-brand-light">
         {activeTab === 'dashboard' && (
-          <Dashboard onNavigateDiscipline={() => setActiveTab('disciplines')} />
+          <Dashboard
+            onNavigateDiscipline={() => setActiveTab('disciplines')}
+            onNavigateTasks={() => setActiveTab('tasks')}
+          />
         )}
+        {activeTab === 'tasks' && <GeneralTasks />}
         {activeTab === 'disciplines' && <Disciplines />}
         {activeTab === 'profile' && <Profile />}
       </main>
