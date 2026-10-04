@@ -1,1 +1,82 @@
-node_modules/ 
+# ============================================================================
+# EduTrack AI v2 — .gitignore (Raiz do Repositório)
+# Regras completas de exclusão para Git
+# ============================================================================
+
+# 1. Arquivos de ambiente e segredos (NUNCA comitar)
+.env
+.env.*
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+!.env.example
+**/.env
+**/.env.*
+!**/.env.example
+
+# 2. Dependências Node.js e pastas de build
+node_modules/
+**/node_modules/
+dist/
+**/dist/
+dist-ssr/
+build/
+*.tsbuildinfo
+
+# 3. Ambientes virtuais e caches do Python
+venv/
+.venv/
+**/venv/
+**/.venv/
+env/
+ENV/
+__pycache__/
+**/__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.pytest_cache/
+**/.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.mypy_cache/
+
+# 4. Arquivos de banco de dados e backups locais
+*.bak
+*.mdf
+*.ldf
+*.ndf
+*.sqlite
+*.sqlite3
+*.db
+**/edutrack.db
+
+# 5. Relatórios gerados em tempo de execução
+*.pdf
+reports/generated/*.pdf
+analytics-service/reports/generated/*.pdf
+
+# 6. Logs de execução e depuração
+logs/
+**/logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# 7. Arquivos de editores e IDEs
+.vscode/
+!.vscode/extensions.json
+.idea/
+*.suo
+*.user
+*.swp
+*.swo
+
+# 8. Arquivos temporários do Sistema Operacional
+.DS_Store
+Thumbs.db
+Desktop.ini

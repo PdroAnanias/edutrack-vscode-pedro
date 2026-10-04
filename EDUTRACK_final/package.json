@@ -1,0 +1,29 @@
+{
+  "name": "edutrack-ai-v2",
+  "version": "2.0.0",
+  "description": "EduTrack AI v2 - Sistema de Gestão Acadêmica, Previsão Estatística e Recomendações com IA",
+  "scripts": {
+    "dev": "concurrently -n \"BACKEND,ANALYTICS,FRONTEND\" -c \"blue,green,yellow\" \"npm run dev:backend\" \"npm run dev:analytics\" \"npm run dev:frontend\"",
+    "dev:backend": "cd backend && npm start",
+    "dev:frontend": "cd frontend && npm run dev",
+    "dev:analytics": "cd analytics-service && python -m uvicorn app.main:app --host 127.0.0.1 --port 8000 --reload",
+    "install:all": "npm install && cd backend && npm install && cd ../frontend && npm install && cd ../analytics-service && pip install -r requirements.txt",
+    "setup-db": "powershell -ExecutionPolicy Bypass -File ./database/setup-db.ps1",
+    "db:setup": "powershell -ExecutionPolicy Bypass -File ./database/setup-db.ps1",
+    "db:migrate-sqlite": "cd database && node migrate_from_sqlite.js",
+    "db:seed:loadtest": "cd database && node seed_loadtest.js",
+    "test": "npm run test:backend && npm run test:analytics",
+    "test:backend": "node tests/backend_integration.test.js",
+    "test:analytics": "cd analytics-service && python -m pytest",
+    "test:load": "node tests/load/load_test.js"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "dotenv": "^18.0.5",
+    "msnodesqlv8": "^5.5.0",
+    "mssql": "^12.7.2"
+  }
+}
