@@ -188,3 +188,12 @@ npm run test:load
 - [Configuração Detalhada do SQL Server](EDUTRACK_final/docs/SETUP_SQLSERVER.md): Guia passo a passo de configuração do banco.
 - [Relatório de Desempenho e Carga](EDUTRACK_final/docs/RELATORIO_DESEMPENHO.md): Evidências de testes com 1.200 alunos e métricas p95.
 - [Guia do Gemini e Engenharia de Prompts](EDUTRACK_final/GEMINI.md): Especificações das chamadas ao modelo LLM.
+
+
+
+## Tecnologias Utilizadas
+- Git & GitHub
+- VS Code
+- Node.js
+- OpenSpec
+- Xano
