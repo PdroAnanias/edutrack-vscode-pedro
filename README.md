@@ -1,200 +1,145 @@
-# EduTrack AI v2 — Sistema de Gestão Acadêmica e Inteligência Preditiva
+# EduTrack AI — Sistema de Gestão Acadêmica
 
-> Sistema web full-stack completo para acompanhamento de disciplinas acadêmicas, controle de tempo de estudo em tempo real com cronômetro integrado, previsão estatística de término de matérias, recomendações personalizadas com Google Gemini e emissão assíncrona de relatórios semanais em PDF.
+> Aplicativo de gestão acadêmica com foco em organização de disciplinas, controle de tarefas e prazos, cálculo automatizado de progresso escolar e emissão de relatórios de desempenho em PDF.
+
+> [!NOTE]
+> **Contexto de Versões do Projeto:**
+> Este repositório documenta e implementa a versão atual do **EduTrack AI**, cujo frontend está sendo desenvolvido dentro do **FlutterFlow** e o backend gerenciado no **Xano** (via **XanoScript**), utilizando **OpenSpec** para especificação de requisitos e **Python** para scripts utilitários.
+> A versão final/original do ecossistema encontra-se em outro projeto, tendo sido estruturada com **Google Antigravity**, **Microsoft SQL Server**, **JavaScript**, **Node.js** e **Python**.
 
 ---
 
-## 🏗️ Arquitetura do Sistema
-
-O projeto é estruturado em uma arquitetura de microsserviços desacoplada e relacional:
+## 📱 Visão Geral da Arquitetura Atual
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                   Frontend (React 18 + Vite)                │
-│            Porta 5173 • Design System WCAG AA • Jost        │
+│                 Frontend (FlutterFlow)                      │
+│        App Mobile & Web • Interface Intuitiva e Reativa      │
 └───────────────┬─────────────────────────────────────────────┘
-                │ Proxy HTTP /api
+                │ Chamadas REST com Bearer Token (JWT)
 ┌───────────────▼─────────────────────────────────────────────┐
-│                 Backend API (Node.js + Express)             │
-│            Porta 3001 • JWT em Memória • Cookie httpOnly    │
+│                  Backend (Xano / XanoScript)                │
+│    APIs RESTful • Isolamento Multi-tenant (user_id == auth) │
+│       Grupos: Subjects (CRUD + Busca) • Reports (Download)   │
 └───────┬─────────────────────────────────────────────┬───────┘
-        │ Pool mssql / ODBC 18                        │ X-Internal-Key
+        │ Banco de Dados Relacional                   │ Execução Local / CLI
 ┌───────▼───────────────────────────┐ ┌───────────────▼───────┐
-│     Banco de Dados Relacional     │ │   Analytics Service   │
-│   Microsoft SQL Server 2019/2022  │ │   (Python FastAPI)    │
-│  Base: EduTrackAI • Porta: 1433   │ │      Porta 8000       │
-└───────────────────────────────────┘ └───────┬───────────────┘
-                                              │ Google GenAI SDK
-                                      ┌───────▼───────────────┐
-                                      │  Google Gemini Flash  │
-                                      └───────────────────────┘
+│        Tabelas no Xano            │ │     Scripts de Apoio  │
+│  user • subjects • academic_tasks │ │        (Python)       │
+└───────────────────────────────────┘ └───────────────────────┘
 ```
 
-1. **Frontend (`EDUTRACK_final/frontend/`)**:
-   - **React 18**, **Vite** e **Tailwind CSS**.
-   - Acessibilidade conforme diretrizes **WCAG AA**: suporte a temas Claro, Escuro e Automático (Sistema) e 3 níveis de ajuste do tamanho da fonte (100%, 115%, 130%).
-   - Layout responsivo Mobile-First com barra de navegação inferior em telas pequenas (< 768px) e mini-widget flutuante do cronômetro.
-   - Busca global rápida (`Ctrl + K`) agrupando disciplinas e tarefas.
-   - Segurança: Access Token mantido exclusivamente em memória volátil, com renovação silenciosa transparente via cookie `httpOnly` de 7 dias.
-
-2. **Backend API (`EDUTRACK_final/backend/`)**:
-   - **Node.js** e **Express** conectado ao **Microsoft SQL Server** via driver nativo `mssql` e pool com consultas 100% parametrizadas.
-   - Autenticação e segurança com senhas criptografadas em **bcrypt**, tokens JWT (15 min) e rotação de Refresh Token com detecção de reuso.
-   - Controle de tempo: rotas de cronômetro com garantia por constraint e índice de no máximo 1 sessão ativa por usuário simultaneamente.
-   - Central de tarefas com filtros combinados no servidor, debounce de busca e paginação.
-
-3. **Analytics Service (`EDUTRACK_final/analytics-service/`)**:
-   - **Python 3.11+** com **FastAPI** e **Uvicorn**, protegido por chave interna `X-Internal-Key`.
-   - Cálculo de progresso ponderado por carga horária e peso estatístico das tarefas.
-   - Algoritmo preditivo de previsão de conclusão: ponderação de velocidade recente (pesos 4, 3, 2 e 1 para as últimas 4 semanas) e cálculo de folga em dias.
-   - Motor híbrido de insights: 9 regras determinísticas locais combinadas com enriquecimento assíncrono via API do **Google Gemini** (tempo de resposta < 2s).
-   - Relatórios semanais em PDF: compilação assíncrona com **ReportLab** e gráficos em alta resolução gerados por **Matplotlib**.
-
-4. **Banco de Dados (`EDUTRACK_final/database/`)**:
-   - **Microsoft SQL Server** com 9 tabelas estruturadas, integridade referencial com chaves estrangeiras, views analíticas (`vw_ProgressoDisciplina`, `vw_HorasPorSemana`, `vw_TarefaTempo`) e índices otimizados.
+- **Frontend (FlutterFlow)**: Desenvolvimento da interface do usuário (UI/UX) diretamente no **FlutterFlow**, compilando para Web e dispositivos móveis (Android e iOS). Consome os endpoints REST do Xano através de chamadas autenticadas com Bearer Token, oferecendo dashboards de matérias, checklists de tarefas e visualização de relatórios.
+- **Backend (Xano via XanoScript)**: Camada de persistência e lógica de negócio codificada em **XanoScript** (`.xs`), garantindo regras estritas de autorização e endpoints performáticos.
+- **Scripts Utilitários (Python)**: Scripts auxiliares para cálculos analíticos de conclusão de tarefas, detecção temporal de pendências e compilação de relatórios acadêmicos em formato PDF.
+- **Metodologia (OpenSpec)**: Abordagem *Spec-Driven Development* (SDD). Qualquer nova funcionalidade ou alteração passa por propostas, especificações e lista de tarefas antes da codificação.
+- **Assistência de IA**: Suporte com **Google Gemini** para desenvolvimento orientado e lógica analítica.
 
 ---
 
-## 📋 Pré-requisitos
+## 🗄️ Estrutura de Tabelas (Xano)
 
-Antes de iniciar, certifique-se de ter instalado no seu ambiente Windows:
+Os esquemas das tabelas estão localizados no diretório `tables/`:
 
-1. **Node.js**: versão **20.x** ou superior ([nodejs.org](https://nodejs.org/))
-2. **Python**: versão **3.11** ou **3.12** ([python.org](https://www.python.org/))
-3. **Microsoft SQL Server**: versão **2019**, **2022** ou **SQL Server Express** (`localhost\SQLEXPRESS`) ([download](https://www.microsoft.com/pt-br/sql-server/sql-server-downloads))
-4. **ODBC Driver 18 for SQL Server**: necessário para a biblioteca `pyodbc` do Python ([download](https://learn.microsoft.com/pt-br/sql/connect/odbc/download-odbc-driver-for-sql-server))
-5. **Git**: para clonar o repositório ([git-scm.com](https://git-scm.com/))
-
----
-
-## 🚀 Passo a Passo de Instalação e Execução
-
-### 1. Clonar o Repositório
-Abra o terminal (PowerShell ou Prompt de Comando) e clone o projeto:
-```powershell
-git clone https://github.com/PdroAnanias/edutrack-ai-pedro.git
-cd edutrack-ai-pedro/EDUTRACK_final
-```
-
-### 2. Configurar os Arquivos de Ambiente (.env)
-Copie o modelo de exemplo para criar o arquivo `.env`:
-```powershell
-copy .env.example .env
-copy backend\.env.example backend\.env
-copy analytics-service\.env.example analytics-service\.env
-```
-> **Nota de Configuração**: Abra os arquivos `.env` gerados no seu editor. Se sua instância do SQL Server for diferente do padrão `localhost\SQLEXPRESS`, ajuste o parâmetro `DB_SERVER`. Adicione sua chave da API do Gemini em `LLM_API_KEY` caso deseje testar a IA generativa (o sistema funciona normalmente usando o motor de regras locais caso a chave não seja informada).
-
-### 3. Instalar Todas as Dependências (Node e Python)
-Execute o comando unificado na pasta `EDUTRACK_final`:
-```powershell
-npm run install:all
-```
-*Este comando instala automaticamente as dependências da raiz, do frontend, do backend e os pacotes Python do `analytics-service`.*
-
-### 4. Criar e Popular o Banco de Dados SQL Server
-Execute o script automatizado do projeto:
-```powershell
-npm run setup-db
-```
-*O script `database/setup-db.ps1` é 100% idempotente: ele cria o banco `EduTrackAI`, provisiona os logins e permissões com as senhas configuradas no `.env`, cria as 9 tabelas, índices de restrição, views estatísticas e semeia o aluno de demonstração.*
-
-### 5. Iniciar a Aplicação
-Inicie todos os microsserviços simultaneamente com um único comando:
-```powershell
-npm run dev
-```
-O console exibirá os 3 serviços inicializando em paralelo:
-- `[BACKEND]` API Node.js rodando na porta **3001**
-- `[ANALYTICS]` FastAPI Python rodando na porta **8000**
-- `[FRONTEND]` Interface React Vite rodando na porta **5173**
+1. **`user`** (`tables/745539_user.xs`):
+   - Registro de estudantes e autenticação nativa com senhas criptografadas, controle de perfis e fluxo de recuperação de acesso.
+2. **`subjects`** (`tables/916048_subjects.xs`):
+   - Disciplinas acadêmicas cadastradas (`name`, `teacher`, `hours`), isoladas estritamente por estudante através do campo `user_id`.
+3. **`academic_tasks`** (`tables/academic_tasks.xs`):
+   - Atividades e tarefas escolares com controle de status (`pending`, `completed`), data limite (`due_date`) e vínculos com a disciplina (`subject_id`) e com o aluno (`user_id`).
 
 ---
 
-## 🌐 Endereços de Acesso
+## 🔌 Endpoints de API (RESTful)
 
-Após iniciar com `npm run dev`, acesse no navegador:
+As APIs estão organizadas no diretório `apis/`. Todos os endpoints protegidos exigem autenticação ativa (`auth = "user"`) e aplicam validação estrita de segurança (`user_id == $auth.id`):
 
-| Serviço | Endereço URL | Descrição |
-| :--- | :--- | :--- |
-| **Frontend Web** | [`http://localhost:5173`](http://localhost:5173) | Painel do Estudante, Tarefas, Cronômetro e Relatórios |
-| **Backend Node API** | [`http://localhost:3001/api/health`](http://localhost:3001/api/health) | Verificação de integridade e rotas da API |
-| **Analytics Docs** | [`http://localhost:8000/docs`](http://localhost:8000/docs) | Documentação Swagger/OpenAPI do serviço Python |
+### Grupo `Subjects` (`apis/subjects/`)
+- `GET /subjects`: Lista as disciplinas do aluno autenticado.
+- `POST /subjects`: Cadastra uma nova disciplina vinculada ao `user_id`.
+- `GET /subjects/{id}`: Detalha uma disciplina específica, validando permissão de acesso.
+- `PATCH /subjects/{id}`: Atualiza os dados de uma disciplina existente.
+- `DELETE /subjects/{id}`: Remove uma disciplina do estudante.
+- `GET /subjects/search`: Busca avançada que localiza matérias por correspondência de texto no nome **ou** que possuam tarefas pendentes em atraso (`due_date < now`).
 
----
-
-## 👤 Credenciais do Aluno de Demonstração (Demo)
-
-O script de setup semeia uma conta com histórico acadêmico de 6 semanas, 5 disciplinas e tarefas para teste imediato de gráficos e previsões:
-
-- **E-mail**: `aluno@edutrack.ai`
-- **Senha**: `123456`
-
-*(Na tela de login, você também pode clicar no botão rápido **"Preencher dados do aluno de demonstração (demo)"**).*
+### Grupo `Reports` (`apis/reports/`)
+- `GET /reports/performance/download`: Recupera os dados acadêmicos consolidados do aluno (disciplinas e tarefas concluídas/pendentes) para entrega e geração do relatório de desempenho.
 
 ---
 
-## 🧪 Testes Automatizados
+## 🎨 Integração com o FlutterFlow
 
-Para validar o funcionamento completo da aplicação:
+O frontend está sendo construído no **FlutterFlow** seguindo as seguintes etapas de integração:
 
-```powershell
-# Executar suíte completa de testes
-npm test
+1. **Autenticação**:
+   - Criação de telas de login e cadastro integradas aos endpoints de autenticação do Xano.
+   - Armazenamento persistente e seguro do JWT no App State para injeção automática no header `Authorization: Bearer [token]`.
+2. **Módulo de Disciplinas**:
+   - Telas de listagem em cards ou listas reativas conectadas ao `GET /subjects`.
+   - Modais/formulários de cadastro e edição consumindo `POST /subjects` e `PATCH /subjects/{id}`.
+   - Barra de pesquisa integrada com debounce conectada ao `GET /subjects/search`.
+3. **Módulo de Tarefas e Prazos**:
+   - Listagem de tarefas por disciplina com tags visuais de status e alertas para itens com `due_date` expirado.
+4. **Relatório de Desempenho**:
+   - Botão de ação que consome `GET /reports/performance/download` para acionar a visualização ou download do relatório consolidado do estudante.
 
-# Testes de integração do Backend Node.js
-npm run test:backend
+---
 
-# Testes unitários do Microsserviço Python
-npm run test:analytics
+## 🐍 Scripts Utilitários em Python
 
-# Teste de carga e estresse (meta de latência p95 < 2s)
-npm run test:load
+Localizados no diretório `scripts/`, preparados para execução independente via linha de comando com tratamento de erros (`try/except`) e retorno estruturado em JSON:
+
+- **`scripts/generate_performance_report.py`**:
+  - Compila métricas acadêmicas (disciplinas, total de tarefas, taxa de conclusão e notas) e gera um arquivo PDF diagramado.
+  - Compatível com a biblioteca ReportLab e com gerador de PDF-1.4 nativo (zero dependências obrigatórias).
+  - *Exemplo de uso via terminal:*
+    ```bash
+    python scripts/generate_performance_report.py --student-id "1" --student-name "Carlos Silva" --output "relatorio.pdf"
+    ```
+- **`scripts/calculate_progress.py`**:
+  - Calcula a porcentagem e métricas de conclusão de tarefas a partir de valores concluídos e totais.
+- **`scripts/filter_overdue_subjects.py`**:
+  - Utilitário de filtragem de disciplinas que contenham atividades com prazo vencido em relação ao horário UTC atual.
+
+---
+
+## 📋 Governança e Metodologia (OpenSpec)
+
+O projeto adota o **OpenSpec** como padrão de desenvolvimento orientado a especificações:
+
+- `openspec/specs/`: Especificações permanentes e consolidadas das capacidades do sistema.
+- `openspec/changes/`: Especificações de mudanças ativas, propostas e tarefas em andamento.
+- `openspec/changes/archive/`: Histórico de mudanças implementadas e arquivadas.
+
+Comandos frequentes:
+```bash
+# Validar integridade das especificações
+openspec validate --strict
+
+# Consultar status das tarefas de uma mudança
+openspec instructions apply --change "<nome-da-change>" --json
 ```
 
 ---
 
-## 🛠️ Resolução de Problemas Comuns (Troubleshooting)
+## 📂 Estrutura de Pastas do Projeto
 
-### 1. Erro de Conexão com o SQL Server (Porta 1433 / TCP/IP)
-- **Causa**: O SQL Server Express vem com o protocolo de rede TCP/IP desabilitado por padrão.
-- **Solução**:
-  1. Abra o `SQL Server Configuration Manager` (`SQLServerManager16.msc`).
-  2. Vá em **SQL Server Network Configuration** > **Protocols for SQLEXPRESS**.
-  3. Dê um clique duplo em **TCP/IP** e marque **Enabled = Yes**.
-  4. Na aba **IP Addresses**, vá até o final em **IPAll**, deixe `TCP Dynamic Ports` em branco e defina `TCP Port` = `1433`.
-  5. Reinicie o serviço do SQL Server em **SQL Server Services**.
-
-### 2. Falha de Logon do Usuário `edutrack_app`
-- **Causa**: O SQL Server está configurado apenas para autenticação do Windows (Windows Authentication mode).
-- **Solução**: No SQL Server Management Studio (SSMS), clique com o botão direito no servidor > **Propriedades** > **Segurança** > selecione **"Modo de Autenticação do SQL Server e do Windows"** e reinicie o serviço.  
-*(O backend em ambiente de desenvolvimento local também possui fallback automático para autenticação integrada do Windows caso necessário).*
-
-### 3. Erro de Certificado SSL no Python (`ODBC Driver 18`)
-- **Mensagem**: `SSL Provider: [error:0A000086:certificate verify failed]`.
-- **Solução**: O driver 18 exige criptografia por padrão. O projeto já inclui `TrustServerCertificate=yes` nas strings de conexão para aceitar o certificado local de desenvolvimento.
-
-### 4. Tela Branca ao Acessar o Frontend
-- **Causa**: Cache antigo de compilação ou do navegador.
-- **Solução**: No navegador (Chrome/Edge), pressione **`Ctrl + F5`** para forçar a atualização dos módulos JavaScript.
-
----
-
-## 📚 Documentação Técnica Complementar
-
-- [Dicionário de Dados](EDUTRACK_final/docs/DICIONARIO_DADOS.md): Detalhamento das 9 tabelas, tipos de dados, chaves e constraints.
-- [Diagrama Entidade-Relacionamento (DER)](EDUTRACK_final/docs/DER.md): Modelo conceitual e visual das tabelas.
-- [Arquitetura do Sistema](EDUTRACK_final/docs/ARQUITETURA.md): Topologia de microsserviços, fluxo de autenticação JWT e segurança.
-- [Configuração Detalhada do SQL Server](EDUTRACK_final/docs/SETUP_SQLSERVER.md): Guia passo a passo de configuração do banco.
-- [Relatório de Desempenho e Carga](EDUTRACK_final/docs/RELATORIO_DESEMPENHO.md): Evidências de testes com 1.200 alunos e métricas p95.
-- [Guia do Gemini e Engenharia de Prompts](EDUTRACK_final/GEMINI.md): Especificações das chamadas ao modelo LLM.
-
-
-
-## Tecnologias Utilizadas
-- Git & GitHub
-- VS Code
-- Node.js
-- OpenSpec
-- Xano
-- FlutterFlow
+```
+edutrack-ai-pedro/
+├── apis/                     # Endpoints e grupos de API em XanoScript
+│   ├── reports/              # API de relatórios e download
+│   └── subjects/             # API de disciplinas (CRUD + busca)
+├── tables/                   # Definição das tabelas em XanoScript (.xs)
+│   ├── 745539_user.xs        # Tabela de usuários e autenticação
+│   ├── 916048_subjects.xs    # Tabela de disciplinas
+│   └── academic_tasks.xs     # Tabela de tarefas acadêmicas
+├── scripts/                  # Utilitários e geradores em Python
+│   ├── calculate_progress.py
+│   ├── filter_overdue_subjects.py
+│   └── generate_performance_report.py
+├── openspec/                 # Metodologia Spec-Driven Development
+│   ├── changes/              # Mudanças ativas e arquivadas
+│   └── specs/                # Especificações consolidadas
+├── AGENTS.md                 # Regras e diretrizes para agentes de IA
+└── README.md                 # Documentação principal da versão atual
+```
