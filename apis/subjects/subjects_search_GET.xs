@@ -15,9 +15,26 @@ query "subjects/search" verb=GET {
       return = {type: "list"}
     } as $overdue_tasks
   
-    // 2. Query subjects belonging to the authenticated user matching search parameter OR having overdue tasks
+    // 2. Extract simple array of integer subject IDs using native foreach loop
+    var $overdue_subject_ids {
+      value = []
+    }
+  
+    foreach ($overdue_tasks) {
+      each as $task {
+        conditional {
+          if ($task.subject_id != null) {
+            array.push $overdue_subject_ids {
+              value = $task.subject_id
+            }
+          }
+        }
+      }
+    }
+  
+    // 3. Query subjects belonging to the authenticated user matching search parameter OR having overdue tasks
     db.query subjects {
-      where = $db.subjects.user_id == $auth.id && ($db.subjects.name == $input.search || $db.subjects.name == $input.name || $db.subjects.id == $overdue_tasks.subject_id)
+      where = $db.subjects.user_id == $auth.id && ($db.subjects.name includes $input.search || $db.subjects.name includes $input.name || ($db.subjects.id in $overdue_subject_ids))
       return = {type: "list"}
     } as $subjects
   }
